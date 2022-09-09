@@ -1,0 +1,7 @@
+Build Command
+- mvn clean
+- mvn install -DskipTests
+
+Banner generator
+-https://manytools.org/hacker-tools/ascii-banner/
+-font : small slant
