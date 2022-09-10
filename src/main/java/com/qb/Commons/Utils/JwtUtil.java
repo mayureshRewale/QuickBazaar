@@ -99,7 +99,7 @@ public class JwtUtil {
 		Map<String, Object> refreshClaims = new HashMap<>();
 		refreshClaims.put("isRefreshToken", true);
 		String refreshToken = doGenerateRefreshToken(refreshClaims, username);
-		return "Bearer "+accessToken+ " "+refreshToken;
+		return "Bearer "+accessToken+ "|Bearer "+refreshToken;
 	}
 
 }

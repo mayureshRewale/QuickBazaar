@@ -26,6 +26,8 @@ public class AuthenticationController {
 	 * 3. register 		-> register user details
 	 * 4. set-mpin 		-> set mpin for contact
 	 * 5. authenticate 	-> Login with mobile and mpin
+	 *
+	 * use /swagger-ui/index.html to access swaager-ui
 	 */
 	
 	@GetMapping("/get-otp")

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import javax.transaction.Transactional;
 import java.lang.invoke.MethodHandles;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class ApplicationSetupConfig implements ApplicationListener<ContextRefreshedEvent> {
@@ -69,10 +70,10 @@ public class ApplicationSetupConfig implements ApplicationListener<ContextRefres
                 adminUserDetails.setUserName(adminUsername);
                 adminUserDetails.setPassword(adminPassword);
 
-                Roles userRole = rolesRepository.findByNameAndIsActive("ROLE_ADMIN", true);
-                if (userRole != null) {
+                List<String> rolesList = rolesRepository.findAll().stream().map(roles -> roles.getName()).collect(Collectors.toList());
+                if(Objects.nonNull(rolesList) && rolesList.size() > 0){
                     log.info("Setting Roles");
-                    adminUserDetails.setRoles(userRole.getName());
+                    adminUserDetails.setRoles(String.join(",", rolesList));
                 }
 
                 daoUser.setFirstName(adminFirstName);
@@ -80,9 +81,7 @@ public class ApplicationSetupConfig implements ApplicationListener<ContextRefres
                 daoUser.setLastName(adminLastName);
 
                 UserDetails savedUser = userDetailsRepository.save(adminUserDetails);
-
-                UserDetailsBean userDetailsDTO = EntityPojoMapper.mapUserDAO(savedUser);
-                log.info("UserDetailsDTO :: {}", userDetailsDTO);
+                log.info("Admin UserDetails :: {}", savedUser);
             }else {
                 log.info("Admin User Exists");
 //                log.info("Admin User Exists :: {} :: {}", authentication.getUserName(), adminUsername);

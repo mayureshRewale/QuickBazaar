@@ -69,16 +69,6 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 					null,
 					user.getAuthorities()
 			);
-//		} catch (MpinBlockedUserException exception) {
-//			log.info("Exception while authenticating user:{}", exception.getMessage());
-//			res.setStatus(HttpStatus.OK.value());
-//			res.setHeader("Content-Type","application/json");
-//			BaseResponse<String> resp = new BaseResponse<>(TransitAPIConstants.API_MPIN_BLOCKED_USER_CODE,exception.getMessage(),"");
-//			OutputStream out = res.getOutputStream();
-//			com.fasterxml.jackson.databind.ObjectMapper mapper = new ObjectMapper();
-//			mapper.writeValue(out, resp);
-//			out.flush();
-//			return null;
 		} catch (Exception e) {
 			log.info("Exception while authenticating user:{}", e.getMessage());
 			res.setStatus(HttpStatus.OK.value());
@@ -114,7 +104,10 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 			userDetails.put("name",fullName);
 			userDetails.put("mobileNo", userDetailsEntity.getMobile());
 			userDetails.put("emailId", userDetailsEntity.getEmail());
-			
+			userDetails.put("username", userDetailsEntity.getUserName());
+			userDetails.put("accessToken", token.substring(0, token.indexOf("|")));
+			userDetails.put("refreshToken", token.substring(token.indexOf("|")+1, token.length()));
+
 			OutputStream out = res.getOutputStream();
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.writeValue(out, userDetails);

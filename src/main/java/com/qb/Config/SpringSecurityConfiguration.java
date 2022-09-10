@@ -29,6 +29,10 @@ import com.qb.Security.CustomJwtAuthorizationFilter;
 public class SpringSecurityConfiguration  extends WebSecurityConfigurerAdapter{
 	
 	private static final String[] AUTH_WHITELIST = {
+			"/swagger-resources/**",
+			"/swagger-ui/**",
+			"/v3/api-docs",
+			"/webjars/**",
 			UrlConstants.AUTHENTICATE_URL,
 			UrlConstants.TEST_URL+"/**",
 			UrlConstants.AUTHENTICATION_URL+"/**"
