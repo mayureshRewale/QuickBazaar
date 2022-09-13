@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.qb.Dao.Repository.UserDetailsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,7 +34,8 @@ import lombok.SneakyThrows;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-	private Boolean isTestMode = Boolean.TRUE;
+	@Value("${app.otp.istest}")
+	private Boolean isTestMode;
 	
 	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	

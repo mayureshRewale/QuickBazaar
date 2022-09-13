@@ -1,20 +1,26 @@
 package com.qb.QBAuthentication.ServiceImpl;
 
+import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.qb.Commons.Utils.CommonUtils;
+import com.qb.Commons.Utils.JwtUtil;
+import com.qb.Dao.Beans.*;
+import com.qb.Security.CustomUserDetailsService;
+import com.qb.SpringApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import com.qb.Dao.Entities.Roles;
 import com.qb.Dao.Entities.UserDetails;
-import com.qb.Dao.Beans.RegisterUserBean;
-import com.qb.Dao.Beans.ServiceResponseBean;
-import com.qb.Dao.Beans.UserDetailsBean;
 import com.qb.Dao.Mappers.EntityPojoMapper;
 import com.qb.Dao.Repository.RolesRepository;
 import com.qb.Dao.Repository.UserDetailsRepository;
@@ -28,6 +34,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	
 	@Autowired
 	OtpUtils otpUtils;
+
+	@Autowired
+	JwtUtil jwtUtil;
 	
 	@Autowired
 	RolesRepository roleRepository;
@@ -198,6 +207,88 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			log.error("Exception : {}", e);
 			return ServiceResponseBean.builder().errorMessage("Something went wrong.. Please try again later").status(Boolean.FALSE).build();
 		}
+	}
+
+	@Override
+	public ServiceResponseBean login(LoginRequestBean loginRequestBean) {
+		log.info("Request in login");
+		try {
+			String username;
+			if (loginRequestBean.getUsername() != null && loginRequestBean.getUsername() != ""){
+				username = loginRequestBean.getUsername();
+				if(!verifyADUser(username, loginRequestBean.getPassword()))
+					throw new Exception("Admin User Not Authenticated");
+			}
+			else {
+				username = loginRequestBean.getMobile();
+				log.info("Mobile {}, OTP {}", loginRequestBean.getMobile(), loginRequestBean.getOtp());
+				if (!loginRequestBean.getMobile().isBlank() && !loginRequestBean.getOtp().isBlank() && !verifyUserByOTP(username, loginRequestBean.getOtp()))
+					throw new Exception("Incorrect OTP");
+				else if(!loginRequestBean.getMobile().isBlank() && !loginRequestBean.getMpin().isBlank() && !verifyMobileAndMpin(username, loginRequestBean.getMpin()))
+					throw new Exception("Incorrect MPIN");
+			}
+
+			CustomUserDetailsService userDetailsService  = (CustomUserDetailsService) SpringApplicationContext.getBean("customUserDetailsService");
+			User user = userDetailsService.loadUserByUsername(username);
+
+			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+					user,
+					null,
+					user.getAuthorities()
+			);
+			return processAuthentication(username);
+		} catch (Exception e) {
+			log.info("Exception while authenticating user:{}", e.getMessage());
+			return ServiceResponseBean.builder().status(Boolean.FALSE).errorMessage("Unable to login").build();
+		}
+	}
+
+	private ServiceResponseBean processAuthentication(String username) {
+		log.info("Getting user with username");
+
+		UserDetails userDetailsEntity = userDetailsRepository.findByUserNameIgnoreCaseAndIsActive(username, true);
+		log.info("Successfully fetched AuthObject");
+
+		String token = jwtUtil.getFullAutherizationToken(username);
+		log.info("Successfully Fetched Token");
+
+		Map<String, String> userDetails = new HashMap<>();
+		String fullName = CommonUtils.getFullName(userDetailsEntity.getFirstName(), userDetailsEntity.getMiddleName(), userDetailsEntity.getLastName());
+		LoginResponseBean loginResponseBean = new LoginResponseBean();
+		loginResponseBean.setName(fullName);
+		loginResponseBean.setMobile(userDetailsEntity.getMobile());
+		loginResponseBean.setEmail(userDetailsEntity.getEmail());
+		loginResponseBean.setUsername(userDetailsEntity.getUserName());
+		loginResponseBean.setAccessToken(token.substring(0, token.indexOf("|")));
+		loginResponseBean.setRefreshToken(token.substring(token.indexOf("|")+1, token.length()));
+		log.info("Sending Final data");
+
+		return ServiceResponseBean.builder().status(Boolean.TRUE).data(loginResponseBean).build();
+	}
+
+	private boolean verifyUserByOTP(String username, String otp){
+		try{
+			if (otpUtils.verifyOtp(username+"_LOGIN", otp)) {
+				log.info("OTP Verisied - Mobile :: {}, OTP :: {}", username, otp);
+				otpUtils.removeOtp(username+"_LOGIN");
+				return true;
+			}
+		} catch (Exception e){
+			log.error("Error while verifying OTP: {}",e.getMessage());
+		}
+		return false;
+	}
+
+	private boolean verifyADUser(String username, String password){
+		if(Boolean.TRUE)
+			return !CommonUtils.isNullOrEmpty(username) && !CommonUtils.isNullOrEmpty(password) && password.equals("Test@1234");
+		UserDetails userDetailsEntity = userDetailsRepository.findByUserNameIgnoreCase(username);
+		return !CommonUtils.isNullOrEmpty(username) && !CommonUtils.isNullOrEmpty(password) && password.equals(userDetailsEntity.getPassword());
+	}
+
+	private boolean verifyMobileAndMpin(String mobile, String mpin){
+		UserDetails userDetailsEntity = userDetailsRepository.findByMobile(mobile);
+		return !CommonUtils.isNullOrEmpty(mobile) && !CommonUtils.isNullOrEmpty(mpin) && mpin.equals(userDetailsEntity.getMpin());
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.qb.QBAuthentication.Controller;
 
+import com.qb.Dao.Beans.LoginRequestBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,6 +53,12 @@ public class AuthenticationController {
 	public ServiceResponseBean setMpin(@RequestParam("contact") String contact, @RequestParam("mpin") String mpin) {
 		ServiceResponseBean serviceResponse = authService.setMpin(contact, mpin);
 		return serviceResponse;		
+	}
+
+	@PostMapping("/login")
+	public ServiceResponseBean login(@RequestBody LoginRequestBean loginRequestBean) {
+		ServiceResponseBean serviceResponse = authService.login(loginRequestBean);
+		return serviceResponse;
 	}
 	
 }

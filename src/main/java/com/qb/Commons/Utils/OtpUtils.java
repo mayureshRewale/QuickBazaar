@@ -6,18 +6,22 @@ import java.security.SecureRandom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OtpUtils {
 	
 	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-	
-    private Integer length = 6;
-    
-    private int expiration = 5000;
-    
-    private boolean isTestOtp = true;
+
+    @Value("${app.otp.length}")
+    private Integer length;
+
+    @Value("${app.otp.expiration}")
+    private int expiration;
+
+    @Value("${app.otp.istest}")
+    private boolean isTestOtp;
     
     @Autowired
 	RedisClientUtils redisClient;

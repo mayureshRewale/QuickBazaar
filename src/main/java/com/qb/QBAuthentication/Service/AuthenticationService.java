@@ -1,5 +1,6 @@
 package com.qb.QBAuthentication.Service;
 
+import com.qb.Dao.Beans.LoginRequestBean;
 import com.qb.Dao.Beans.RegisterUserBean;
 import com.qb.Dao.Beans.ServiceResponseBean;
 
@@ -12,5 +13,6 @@ public interface AuthenticationService {
 	ServiceResponseBean registerUser(RegisterUserBean registerUserDTO);
 
 	ServiceResponseBean setMpin(String contact, String mpin);
-	
+
+	ServiceResponseBean login(LoginRequestBean loginRequestBean);
 }

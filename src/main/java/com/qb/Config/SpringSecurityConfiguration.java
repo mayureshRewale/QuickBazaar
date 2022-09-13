@@ -78,7 +78,7 @@ public class SpringSecurityConfiguration  extends WebSecurityConfigurerAdapter{
 //		.regexMatchers("/").hasAnyRole("ROLE_USER")
 		.anyRequest().authenticated()
 		.and()
-		.addFilter(getAuthenticationFilter())
+//		.addFilter(getAuthenticationFilter())
 		.addFilter(new CustomJwtAuthorizationFilter(authenticationManager()))
 		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 		.and()
