@@ -149,7 +149,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	        }
 			
 			userDetailsEntity.setFirstName(registerUserDTO.getFirstName());
-			userDetailsEntity.setMiddleName(registerUserDTO.getMiddleName());
+//			userDetailsEntity.setMiddleName(registerUserDTO.getMiddleName());
+            userDetailsEntity.setDob(registerUserDTO.getDob());
+			userDetailsEntity.setGender(registerUserDTO.getGender());
 			userDetailsEntity.setLastName(registerUserDTO.getLastName());
 			
 			UserDetails savedUser = userDetailsRepository.save(userDetailsEntity);
@@ -253,7 +255,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		log.info("Successfully Fetched Token");
 
 		Map<String, String> userDetails = new HashMap<>();
-		String fullName = CommonUtils.getFullName(userDetailsEntity.getFirstName(), userDetailsEntity.getMiddleName(), userDetailsEntity.getLastName());
+		String fullName = CommonUtils.getFullName(userDetailsEntity.getFirstName(), "", userDetailsEntity.getLastName());
 		LoginResponseBean loginResponseBean = new LoginResponseBean();
 		loginResponseBean.setName(fullName);
 		loginResponseBean.setMobile(userDetailsEntity.getMobile());

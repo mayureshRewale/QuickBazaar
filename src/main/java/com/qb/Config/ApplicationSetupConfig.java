@@ -77,7 +77,7 @@ public class ApplicationSetupConfig implements ApplicationListener<ContextRefres
                 }
 
                 daoUser.setFirstName(adminFirstName);
-                daoUser.setMiddleName(adminMiddleName);
+//                daoUser.setMiddleName(adminMiddleName);
                 daoUser.setLastName(adminLastName);
 
                 UserDetails savedUser = userDetailsRepository.save(adminUserDetails);

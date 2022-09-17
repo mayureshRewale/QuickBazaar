@@ -102,7 +102,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 			log.info("Successfully Fetched Token");
 			
 			Map<String, String> userDetails = new HashMap<>();
-			String fullName = CommonUtils.getFullName(userDetailsEntity.getFirstName(), userDetailsEntity.getMiddleName(), userDetailsEntity.getLastName());
+			String fullName = CommonUtils.getFullName(userDetailsEntity.getFirstName(), "", userDetailsEntity.getLastName());
 			userDetails.put("name",fullName);
 			userDetails.put("mobileNo", userDetailsEntity.getMobile());
 			userDetails.put("emailId", userDetailsEntity.getEmail());

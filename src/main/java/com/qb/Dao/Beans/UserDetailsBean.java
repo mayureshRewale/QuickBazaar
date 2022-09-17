@@ -31,9 +31,13 @@ public class UserDetailsBean {
 
 	private String firstName;
 
-	private String middleName;
+//	private String middleName;
 
 	private String lastName;
+
+	private String dob;
+
+	private String gender;
 	
 	private List<String> roles;
 

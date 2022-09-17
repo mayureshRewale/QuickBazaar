@@ -20,10 +20,12 @@ public class EntityPojoMapper {
 			
 			userDetailsDTO.setId(daoUser.getId());
 			userDetailsDTO.setFirstName(daoUser.getFirstName());
-			userDetailsDTO.setMiddleName(daoUser.getMiddleName());
+//			userDetailsDTO.setMiddleName(daoUser.getMiddleName());
+			userDetailsDTO.setDob(daoUser.getDob());
 			userDetailsDTO.setLastName(daoUser.getLastName());
 			userDetailsDTO.setEmail(daoUser.getEmail());
 			userDetailsDTO.setMobile(daoUser.getMobile());
+			userDetailsDTO.setGender(daoUser.getGender());
 			userDetailsDTO.setRoles(Arrays.asList(daoUser.getRoles().split(",")));
 			
 		}catch (Exception e) {

@@ -42,8 +42,8 @@ public class UserDetails {
 	@Column(name = "qud_first_name")
 	private String firstName;
 
-	@Column(name = "qud_middle_name")
-	private String middleName;
+//	@Column(name = "qud_middle_name")
+//	private String middleName;
 
 	@Column(name = "qud_last_name")
 	private String lastName;
@@ -57,6 +57,9 @@ public class UserDetails {
 	@Column(name = "qa_mobile", unique=true)
 	private String mobile;
 
+	@Column(name = "qa_gender")
+	private String gender;
+
 	@Column(name = "qa_otp_verification")
 	private Boolean otpVerification = true;
 
@@ -68,6 +71,9 @@ public class UserDetails {
 
 	@Column(name = "qa_mpin")
 	private String mpin;
+
+	@Column(name = "qud_dob")
+	private String dob;
 
 	@Column(name = "qa_roles")
 	private String roles;
