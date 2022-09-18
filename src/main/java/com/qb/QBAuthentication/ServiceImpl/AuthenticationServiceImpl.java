@@ -134,6 +134,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	public ServiceResponseBean registerUser(RegisterUserBean registerUserDTO) {
 		log.info("Request in registerUser");
 
+		if(Objects.nonNull(userDetailsRepository.findByMobile(registerUserDTO.getMobile()))){
+			return ServiceResponseBean.builder().status(Boolean.FALSE).message("User already exists").build();
+		}
+
 		UserDetails userDetailsEntity = new UserDetails();
 		
 		try {
