@@ -60,6 +60,7 @@ public class SpringSecurityConfiguration  extends WebSecurityConfigurerAdapter{
 		configuration.setMaxAge(Long.parseLong("100000"));
 		List<String> originList = Arrays.asList("","");
 		configuration.setAllowedOrigins(originList);
+		configuration.addAllowedOriginPattern("*");
 		configuration.setExposedHeaders(Arrays.asList("Authorization", "content-type"));
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
