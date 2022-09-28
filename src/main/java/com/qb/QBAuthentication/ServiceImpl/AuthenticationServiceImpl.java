@@ -7,6 +7,7 @@ import java.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qb.Commons.Utils.CommonUtils;
 import com.qb.Commons.Utils.JwtUtil;
+import com.qb.Commons.Utils.RedisClientUtils;
 import com.qb.Dao.Beans.*;
 import com.qb.Security.CustomUserDetailsService;
 import com.qb.SpringApplicationContext;
@@ -46,6 +47,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	
 	@Autowired
 	UserDetailsRepository userRepository;
+
+	@Autowired
+	RedisClientUtils redisClientUtils;
 	
 	@Override
 	public ServiceResponseBean getOtp(String contact, String otpType) {
@@ -245,7 +249,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			return processAuthentication(username);
 		} catch (Exception e) {
 			log.info("Exception while authenticating user:{}", e.getMessage());
-			return ServiceResponseBean.builder().status(Boolean.FALSE).errorMessage("Unable to login").build();
+			return ServiceResponseBean.builder().status(Boolean.FALSE).errorMessage(e.getMessage() + "... Unable to login").build();
+		}
+	}
+
+	@Override
+	public ServiceResponseBean logout(String username) {
+		log.info("Request received in logout method");
+		try {
+			redisClientUtils.deletePattern(username + ":*");
+			return ServiceResponseBean.builder().status(Boolean.TRUE).message("Logged Out Successfully").build();
+		}catch (Exception e){
+			return ServiceResponseBean.builder().status(Boolean.FALSE).message("Something went wrong").build();
 		}
 	}
 
@@ -258,7 +273,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		String token = jwtUtil.getFullAutherizationToken(username);
 		log.info("Successfully Fetched Token");
 
-		Map<String, String> userDetails = new HashMap<>();
 		String fullName = CommonUtils.getFullName(userDetailsEntity.getFirstName(), "", userDetailsEntity.getLastName());
 		LoginResponseBean loginResponseBean = new LoginResponseBean();
 		loginResponseBean.setName(fullName);

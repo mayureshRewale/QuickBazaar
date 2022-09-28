@@ -44,7 +44,7 @@ public class JwtUtil {
 				.signWith(SignatureAlgorithm.HS512, secret).compact();
 			long exp_time = CommonUtils.getCurrentTimeSec()+ idleSessionTimeOut;
 			String redisKey = subject+":"+token;
-//			redisClient.deletePattern(subject+":*");
+			redisClient.deletePattern(subject+":*");
 			redisClient.setValue(redisKey, String.valueOf(exp_time), idleSessionTimeOut);
 		return token;
 

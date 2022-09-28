@@ -60,5 +60,11 @@ public class AuthenticationController {
 		ServiceResponseBean serviceResponse = authService.login(loginRequestBean);
 		return serviceResponse;
 	}
+
+	@PostMapping("/logout")
+	public ServiceResponseBean logout(@RequestParam(name = "username") String username) {
+		ServiceResponseBean serviceResponse = authService.logout(username);
+		return serviceResponse;
+	}
 	
 }

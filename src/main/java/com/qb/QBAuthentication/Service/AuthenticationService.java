@@ -15,4 +15,6 @@ public interface AuthenticationService {
 	ServiceResponseBean setMpin(String contact, String mpin);
 
 	ServiceResponseBean login(LoginRequestBean loginRequestBean);
+
+	ServiceResponseBean logout(String username);
 }
